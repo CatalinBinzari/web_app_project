@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"myapp/pkg/config"
 	"myapp/pkg/handlers"
@@ -31,10 +30,14 @@ func main() {
 	// gives to render pkg access to app.config
 	render.NewTemplates(&app)
 
-	http.HandleFunc("/", handlers.Repo.Home)
-	http.HandleFunc("/about", handlers.Repo.About)
+	srv := &http.Server{
+		Addr:    portnumber,
+		Handler: routes(&app),
+	}
 
-	fmt.Println("Starting application on port %s", portnumber)
-	_ = http.ListenAndServe(portnumber, nil)
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 }

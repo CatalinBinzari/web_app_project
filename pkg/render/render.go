@@ -18,7 +18,7 @@ func NewTemplates(a *config.AppConfig) {
 }
 
 func AddDefaultData(td *models.TemplateData) *models.TemplateData {
-
+	return td
 }
 
 func RenderTemplate(w http.ResponseWriter, tmpl string, td *models.TemplateData) {
