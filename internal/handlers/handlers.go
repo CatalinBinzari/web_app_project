@@ -4,9 +4,9 @@ import (
 	"encoding/json"
 	"fmt"
 	"log"
-	"myapp/pkg/config"
-	"myapp/pkg/models"
-	"myapp/pkg/render"
+	"myapp/internal/config"
+	"myapp/internal/models"
+	"myapp/internal/render"
 	"net/http"
 )
 
@@ -90,6 +90,7 @@ type jsonResponse struct {
 
 // Availability renders the search availability page
 func (m *Repository) AvailabilityJSON(w http.ResponseWriter, r *http.Request) {
+
 	resp := jsonResponse{
 		OK:      true,
 		Message: "Available!",

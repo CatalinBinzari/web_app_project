@@ -75,10 +75,15 @@
             title: 'Choose your dates',
             msg: html,
             callback: function(result) {
-                console.log("called");
-                console.log(result);
 
-                fetch('/search-availability-json')
+                let form = document.getElementById("check-availability-form");
+                let formData = new FormData(form); // contains data from our form
+                formData.append("csrf_token", "{{.CSRFToken}}")
+
+                fetch('/search-availability-json', {
+                    method: "post",
+                    body: formData,
+                })
                     .then(response => response.json())
                     .then(data => {
                         console.log(data);
