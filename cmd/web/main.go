@@ -20,6 +20,25 @@ var app config.AppConfig
 var session *scs.SessionManager
 
 func main() {
+	err := run()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	srv := &http.Server{
+		Addr:    portnumber,
+		Handler: routes(&app),
+	}
+
+	err = srv.ListenAndServe()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+}
+
+func run() error {
+
 	// what we store in the session
 	gob.Register(models.Reservation{})
 
@@ -37,7 +56,8 @@ func main() {
 
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
-		log.Fatal("could not create tmpl cache")
+		log.Println("could not create tmpl cache")
+		return err
 	}
 
 	app.TemplateCache = tc
@@ -50,14 +70,5 @@ func main() {
 	// gives to render pkg access to app.config
 	render.NewTemplates(&app)
 
-	srv := &http.Server{
-		Addr:    portnumber,
-		Handler: routes(&app),
-	}
-
-	err = srv.ListenAndServe()
-	if err != nil {
-		log.Fatal(err)
-	}
-
+	return nil
 }
