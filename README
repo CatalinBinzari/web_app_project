@@ -5,6 +5,6 @@ go run .\cmd\web\
 go test -coverprofile=coverage && go tool cover -html=coverage
 
 used soda to connect to Db:
-![alt text](https://github.com/CatalinBinzari/web_app_project/tree/main/database_schema_pic.png?raw=true)
+![Screenshot](database_schema_pic.png)
 soda generate fizz CreateUserTable
 soda migrate
