@@ -5,9 +5,11 @@ import (
 	"log"
 	"myapp/internal/config"
 	"myapp/internal/handlers"
+	"myapp/internal/helpers"
 	"myapp/internal/models"
 	"myapp/internal/render"
 	"net/http"
+	"os"
 	"time"
 
 	"github.com/alexedwards/scs/v2"
@@ -18,6 +20,8 @@ const portnumber = ":8080"
 // Global variables used in main pkg
 var app config.AppConfig
 var session *scs.SessionManager
+var infoLog *log.Logger
+var errorLog *log.Logger
 
 func main() {
 	err := run()
@@ -45,6 +49,12 @@ func run() error {
 	// change it to true when in production
 	app.InProduction = false
 
+	infoLog = log.New(os.Stdout, "INFO\t", log.Ldate|log.Ltime)
+	app.InfoLog = infoLog
+
+	errorLog = log.New(os.Stderr, "ERROR\t", log.Ldate|log.Ltime)
+	app.ErrorLog = errorLog
+
 	// sessions by default are stored in memory, can be used databases also
 	session = scs.New()
 	session.Lifetime = 24 * time.Hour
@@ -69,6 +79,8 @@ func run() error {
 
 	// gives to render pkg access to app.config
 	render.NewTemplates(&app)
+
+	helpers.NewHelpers(&app)
 
 	return nil
 }
