@@ -4,6 +4,7 @@ import (
 	"encoding/gob"
 	"log"
 	"myapp/internal/config"
+	"myapp/internal/driver"
 	"myapp/internal/handlers"
 	"myapp/internal/helpers"
 	"myapp/internal/models"
@@ -24,10 +25,11 @@ var infoLog *log.Logger
 var errorLog *log.Logger
 
 func main() {
-	err := run()
+	db, err := run()
 	if err != nil {
 		log.Fatal(err)
 	}
+	defer db.SQL.Close()
 
 	srv := &http.Server{
 		Addr:    portnumber,
@@ -41,7 +43,7 @@ func main() {
 
 }
 
-func run() error {
+func run() (*driver.DB, error) {
 
 	// what we store in the session
 	gob.Register(models.Reservation{})
@@ -64,17 +66,25 @@ func run() error {
 
 	app.Session = session
 
+	// connect to Db
+	log.Println("Connection to database initialized...")
+	db, err := driver.ConnectSQL("host=localhost port=5432 dbname=postgres user=postgres password=123")
+	if err != nil {
+		log.Fatal("cannot connect to db, dye: ", db)
+	}
+
 	tc, err := render.CreateTemplateCache()
 	if err != nil {
 		log.Println("could not create tmpl cache")
-		return err
+		return nil, err
 	}
+	log.Println("Connected to database with success")
 
 	app.TemplateCache = tc
 	app.UseCache = app.InProduction
 
 	// pass app config to handlers pkg
-	repo := handlers.NewRepo(&app)
+	repo := handlers.NewRepo(&app, db)
 	handlers.NewHandlers(repo)
 
 	// gives to render pkg access to app.config
@@ -82,5 +92,5 @@ func run() error {
 
 	helpers.NewHelpers(&app)
 
-	return nil
+	return db, nil
 }

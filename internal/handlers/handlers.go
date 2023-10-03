@@ -5,25 +5,30 @@ import (
 	"fmt"
 	"log"
 	"myapp/internal/config"
+	"myapp/internal/driver"
 	"myapp/internal/forms"
 	"myapp/internal/helpers"
 	"myapp/internal/models"
 	"myapp/internal/render"
+	"myapp/internal/repository"
+	"myapp/internal/repository/dbrepo"
 	"net/http"
 )
 
 // Repository is repository type
 type Repository struct {
 	App *config.AppConfig
+	DB  repository.DatabaseRepo
 }
 
 // Repo (repository used by the handlers) var de tip *Repository
 var Repo *Repository
 
 // NewRepo (creates a new repository) returneaza var de tip *Repository intializat cu pointer to AppConfig
-func NewRepo(a *config.AppConfig) *Repository {
+func NewRepo(a *config.AppConfig, db *driver.DB) *Repository {
 	return &Repository{
 		App: a,
+		DB:  dbrepo.NewPostgresRepo(db.SQL, a),
 	}
 }
 
@@ -34,6 +39,7 @@ func NewHandlers(r *Repository) {
 
 // m is receiver
 func (m *Repository) Home(w http.ResponseWriter, r *http.Request) {
+	m.DB.AllUsers()
 	render.RenderTemplate(w, r, "home.page.tmpl", &models.TemplateData{})
 }
 
