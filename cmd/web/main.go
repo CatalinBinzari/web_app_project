@@ -47,6 +47,9 @@ func run() (*driver.DB, error) {
 
 	// what we store in the session
 	gob.Register(models.Reservation{})
+	gob.Register(models.User{})
+	gob.Register(models.Room{})
+	gob.Register(models.Restriction{})
 
 	// change it to true when in production
 	app.InProduction = false
@@ -88,7 +91,7 @@ func run() (*driver.DB, error) {
 	handlers.NewHandlers(repo)
 
 	// gives to render pkg access to app.config
-	render.NewTemplates(&app)
+	render.NewRenderer(&app)
 
 	helpers.NewHelpers(&app)
 
