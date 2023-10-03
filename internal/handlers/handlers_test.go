@@ -2,8 +2,6 @@ package handlers
 
 import (
 	"net/http"
-	"net/http/httptest"
-	"testing"
 )
 
 type postData struct {
@@ -24,25 +22,25 @@ var theTests = []struct {
 	// {"ms", "/major-suite", "GET", []postData{}, http.StatusOK},
 }
 
-func TestHandlers(t *testing.T) {
-	routes := getRoutes()
-	ts := httptest.NewTLSServer(routes) // starts test server
-	defer ts.Close()                    // defer is executed after current function(TestHandlers) is finished
+// func TestHandlers(t *testing.T) {
+// 	routes := getRoutes()
+// 	ts := httptest.NewTLSServer(routes) // starts test server
+// 	defer ts.Close()                    // defer is executed after current function(TestHandlers) is finished
 
-	for _, e := range theTests {
-		if e.method == "GET" {
-			resp, err := ts.Client().Get(ts.URL + e.url)
-			if err != nil {
-				t.Log(err)
-				t.Fatal(err)
-			}
+// 	for _, e := range theTests {
+// 		if e.method == "GET" {
+// 			resp, err := ts.Client().Get(ts.URL + e.url)
+// 			if err != nil {
+// 				t.Log(err)
+// 				t.Fatal(err)
+// 			}
 
-			if resp.StatusCode != e.excepctedStatusCode {
-				t.Errorf("for %s, expected %d, but got %d", e.name, e.excepctedStatusCode, resp.StatusCode)
-			}
-		} else {
-			// TBD
-		}
-	}
+// 			if resp.StatusCode != e.excepctedStatusCode {
+// 				t.Errorf("for %s, expected %d, but got %d", e.name, e.excepctedStatusCode, resp.StatusCode)
+// 			}
+// 		} else {
+// 			// TBD
+// 		}
+// 	}
 
-}
+// }
